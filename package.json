@@ -1,0 +1,26 @@
+{
+  "name": "arvos",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "xpm": "^0.20.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "xpack": {
+    "minimumXpmRequired": "0.20.5",
+    "dependencies": {},
+    "devDependencies": {
+      "@xpack-dev-tools/riscv-none-elf-gcc": {
+        "specifier": "14.2.0-2.1",
+        "local": "link",
+        "platforms": "all"
+      },
+      "@xpack-dev-tools/openocd": {
+        "specifier": "0.12.0-4.1",
+        "local": "link",
+        "platforms": "all"
+      }
+    }
+  }
+}
