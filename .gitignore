@@ -176,7 +176,7 @@ dist
 
 # zig
 zig-out
-zig-cache
+.zig-cache
 
 # npm & xpm
 node_modules

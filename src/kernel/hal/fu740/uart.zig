@@ -46,6 +46,7 @@ pub fn init() void {
 }
 
 pub fn tx(ch: u8) void {
+    peripherals.sifive_uart0_0.txdata.write_raw(ch);
     // while (peripherals.UART0.LSR.read().thre != .empty) {}
     // peripherals.UART0.THR.modify(.{ .thr = ch });
 }
