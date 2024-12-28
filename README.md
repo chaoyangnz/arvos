@@ -2,11 +2,12 @@
 
 A xv6 port on [HiFive Unmatched Rev B](https://www.sifive.com/boards/hifive-unmatched-revb) using Zig.
 
-# Development (Ubuntu)
+# Development
 
 ## Prerequisite
 
-- board: [HiFive Unmatched Rev B](https://www.sifive.com/boards/hifive-unmatched-revb)
+- board: `HiFive Unmatched Rev B`
+- host OS: `Ubuntu`
 - USB-UART driver: `sudo apt install libusb-1.0-0-dev`
 - packages: 
     - Zig: `snap install zig --classic --edge`
