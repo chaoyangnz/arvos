@@ -33,6 +33,7 @@ pub fn build(b: *Build) void {
         "zig-out/bin/kernel.bin",
     });
     objcopy.step.dependOn(&install_kernel.step);
+
     // var objcopy = b.addObjCopy(.{ .path = "zig-out/bin/kernel.elf" }, .{ .format = .bin });
     var objdump = b.addSystemCommand(&[_][]const u8{
         "xpacks/.bin/riscv-none-elf-objdump",
@@ -45,12 +46,12 @@ pub fn build(b: *Build) void {
     });
     objdump.step.dependOn(&install_kernel.step);
 
-    var download_kernel = b.addSystemCommand(&[_][]const u8{ "xfel", "write", "0x40000000", "zig-out/bin/kernel.bin" });
+    var download_kernel = b.addSystemCommand(&[_][]const u8{ "sfload", "-d", "/dev/ttyUSB1", "-f", "zig-out/bin/kernel.bin" });
     download_kernel.step.dependOn(&objcopy.step);
 
     kernel.dependOn(&objcopy.step);
     // kernel.dependOn(&download_kernel.step);
-    // kernel.dependOn(&objdump.step);
+    kernel.dependOn(&objdump.step);
 }
 
 fn build_kernel_unmached(b: *Build) *std.Build.Step.InstallArtifact {
@@ -63,7 +64,6 @@ fn build_kernel_unmached(b: *Build) *std.Build.Step.InstallArtifact {
         },
     };
     const target = b.resolveTargetQuery(query);
-
     const exe = b.addExecutable(.{
         .name = "kernel.elf",
         .root_source_file = .{ .cwd_relative = "src/kernel/main.zig" },
@@ -81,5 +81,6 @@ fn build_kernel_unmached(b: *Build) *std.Build.Step.InstallArtifact {
     var options = b.addOptions();
     options.addOption(Board, "board", Board.unmached);
     exe.root_module.addOptions("build_options", options);
+
     return b.addInstallArtifact(exe, .{});
 }

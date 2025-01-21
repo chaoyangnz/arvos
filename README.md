@@ -31,3 +31,8 @@ Bus 001 Device 004: ID 0403:6001 Future Technology Devices International, Ltd FT
 The above will load the binary to DRAM 0x40000000 and run.
 
 You should be able to see UART output at the end.
+
+## Refs
+
+- 
+- https://github.com/sifive/freedom-e-sdk/blob/master/bsp/sifive-hifive-unmatched
