@@ -1,4 +1,4 @@
-# u-boot
+# u-boot spl and custom loader
 
 ## riscv toolchain
 https://toolchains.bootlin.com/releases_riscv64-lp64d.html

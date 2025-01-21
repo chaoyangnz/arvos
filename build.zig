@@ -47,11 +47,12 @@ pub fn build(b: *Build) void {
     objdump.step.dependOn(&install_kernel.step);
 
     var download_kernel = b.addSystemCommand(&[_][]const u8{ "sfload", "-d", "/dev/ttyUSB1", "-f", "zig-out/bin/kernel.bin" });
+
     download_kernel.step.dependOn(&objcopy.step);
 
     kernel.dependOn(&objcopy.step);
     // kernel.dependOn(&download_kernel.step);
-    kernel.dependOn(&objdump.step);
+    // kernel.dependOn(&objdump.step);
 }
 
 fn build_kernel_unmached(b: *Build) *std.Build.Step.InstallArtifact {

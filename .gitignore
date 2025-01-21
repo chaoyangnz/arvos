@@ -182,3 +182,4 @@ zig-out
 node_modules
 xpacks
 pkg
+tools/sifive-freedom-tools-*

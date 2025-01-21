@@ -40,15 +40,32 @@ pub fn puts(str: []const u8) void {
     }
 }
 
-/// refer to https://wiki.osdev.org/Zig_Bare_Bones
-const writer = std.io.Writer(void, error{}, callback){ .context = {} };
+// https://github.com/ringtailsoftware/zig-minirv32/blob/master/samples/shell/src/term.zig#L37
+// Implement a std.io.Writer backed by uart_write()
+const ConsoleWriter = struct {
+    const Writer = std.io.Writer(
+        *ConsoleWriter,
+        error{},
+        write,
+    );
 
-fn callback(_: void, str: []const u8) error{}!usize {
-    puts(str);
-    return str.len;
-}
+    fn write(
+        self: *ConsoleWriter,
+        data: []const u8,
+    ) error{}!usize {
+        _ = self;
+        puts(data);
+        return data.len;
+    }
+
+    pub fn writer(self: *ConsoleWriter) Writer {
+        return .{ .context = self };
+    }
+};
+
+var console_writer = ConsoleWriter{};
 
 /// print a formated string
 pub fn printf(comptime format: []const u8, args: anytype) void {
-    std.fmt.format(writer, format, args) catch unreachable;
+    std.fmt.format(console_writer.writer(), format, args) catch unreachable;
 }
