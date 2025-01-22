@@ -50,9 +50,13 @@ pub fn CSR(comptime xlen: type) type {
         // which hart (core) is this?
         pub fn r_mhartid() xlen {
             return asm volatile (
-                \\ csrr %0, mhartid
+                \\ csrr %[ret], mhartid
                 : [ret] "=r" (-> xlen),
             );
+        }
+
+        pub fn w_noop(val: xlen) void {
+            _ = val;
         }
 
         // Machine Status Register, mstatus
@@ -65,14 +69,14 @@ pub fn CSR(comptime xlen: type) type {
 
         pub fn r_mstatus() xlen {
             return asm volatile (
-                \\ csrr %0, mstatus
+                \\ csrr %[ret], mstatus
                 : [ret] "=r" (-> xlen),
             );
         }
 
         pub fn w_mstatus(val: xlen) void {
             asm volatile (
-                \\ csrw mstatus, %0
+                \\ csrw mstatus, %[val]
                 :
                 : [val] "r" (val),
             );

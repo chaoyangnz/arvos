@@ -9,5 +9,5 @@ pub fn init() void {
     uart.tx('\n');
 
     console.init(uart.tx);
-    console.printf("console initialised\n", .{});
+    console.println("console initialised", .{});
 }

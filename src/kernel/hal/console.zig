@@ -69,3 +69,7 @@ var console_writer = ConsoleWriter{};
 pub fn printf(comptime format: []const u8, args: anytype) void {
     std.fmt.format(console_writer.writer(), format, args) catch unreachable;
 }
+
+pub fn println(comptime format: []const u8, args: anytype) void {
+    printf(format ++ "\n", args);
+}

@@ -16,79 +16,78 @@ pub fn Mmio(comptime PackedT: type) type {
 
     return extern struct {
         const Self = @This();
+        pub const underlying_type = PackedT;
 
         raw: IntT,
 
-        pub const underlying_type = PackedT;
-
-        pub inline fn read_raw(addr: *volatile Self) IntT {
-            return addr.raw;
+        pub inline fn read_raw(self: *const volatile Self) IntT {
+            return self.raw;
         }
 
-        pub inline fn read(addr: *volatile Self) PackedT {
-            return @bitCast(addr.raw);
+        pub inline fn read(self: *const volatile Self) PackedT {
+            return @bitCast(self.read_raw());
         }
 
         /// write the full PackedT
-        pub inline fn write(addr: *volatile Self, val: PackedT) void {
+        pub inline fn write(self: *volatile Self, val: PackedT) void {
             comptime {
                 assert(@bitSizeOf(PackedT) == @bitSizeOf(IntT));
             }
-            addr.write_raw(@bitCast(val));
+            self.write_raw(@bitCast(val));
         }
 
-        pub inline fn write_raw(addr: *volatile Self, val: IntT) void {
-            addr.raw = val;
+        pub inline fn write_raw(self: *volatile Self, val: IntT) void {
+            self.raw = val;
         }
 
         /// modify/patch only the specific fileds based on the existing value
-        pub inline fn modify(addr: *volatile Self, fields: anytype) void {
-            var val = read(addr);
+        pub inline fn modify(self: *volatile Self, fields: anytype) void {
+            var val = self.read();
             inline for (@typeInfo(@TypeOf(fields)).Struct.fields) |field| {
                 @field(val, field.name) = @field(fields, field.name);
             }
-            write(addr, val);
+            self.write(val);
         }
 
         /// toggle the specific fields only
-        pub inline fn toggle(addr: *volatile Self, fields: anytype) void {
-            var val = read(addr);
+        pub inline fn toggle(self: *volatile Self, fields: anytype) void {
+            var val = self.read();
             inline for (@typeInfo(@TypeOf(fields)).Struct.fields) |field| {
                 @field(val, @tagName(field.default_value.?)) = !@field(val, @tagName(field.default_value.?));
             }
-            write(addr, val);
+            self.write(val);
         }
 
         // extensions
         /// set only the specific fields, others are defaults typically zeros
-        pub inline fn assign(addr: *volatile Self, fields: anytype, default_value: IntT) void {
+        pub inline fn assign(self: *volatile Self, fields: anytype, default_value: IntT) void {
             var val: PackedT = @bitCast(default_value);
             inline for (@typeInfo(@TypeOf(fields)).Struct.fields) |field| {
                 @field(val, field.name) = @field(fields, field.name);
             }
-            write(addr, val);
+            self.write(val);
         }
 
         /// set a field only
-        pub inline fn set_field(addr: *volatile Self, comptime field_name: []const u8, value: anytype) void {
-            var val = read(addr);
+        pub inline fn set_field(self: *volatile Self, comptime field_name: []const u8, value: anytype) void {
+            var val = self.read();
             @field(val, field_name) = value;
-            write(addr, val);
+            self.write(val);
         }
 
-        pub inline fn get_field(addr: *volatile Self, comptime field_name: []const u8) u1 {
-            const val = read(addr);
+        pub inline fn get_field(self: *const volatile Self, comptime field_name: []const u8) u1 {
+            const val = self.read();
             return @field(val, field_name);
         }
 
         /// set a bit
-        pub inline fn set_bit(addr: *volatile Self, index: u5, value: u1) void {
-            const val = read_raw(addr);
+        pub inline fn set_bit(self: *volatile Self, index: u5, value: u1) void {
+            const val = self.read_raw();
             const mask: IntT = 1 << index;
             if (value == 1) {
-                write_raw(addr, val | mask);
+                self.write_raw(val | mask);
             } else {
-                write_raw(addr, val & ~mask);
+                self.write_raw(val & ~mask);
             }
         }
     };

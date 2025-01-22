@@ -1,4 +1,4 @@
-const printf = @import("./console.zig").printf;
+const println = @import("./console.zig").println;
 
 var sdata_var: u8 = 1;
 var bss_var: u8 = undefined;
@@ -49,16 +49,20 @@ pub fn init() void {
 /// also test variables: global data, uninitialised, and local
 /// This one can be called after console is initialised
 pub fn run_test() void {
-    printf("text+rodata: {*} ~ {*}\n", .{ _ro_start, _ro_end });
-    printf("data: {*} ~ {*} loadaddr: {*}\n", .{ _data_start, _data_end, _data_loadaddr });
-    printf("bss: {*} ~ {*}\n", .{ _bss_start, _bss_end });
-    printf("heap: {*} ~ {*}\n", .{ _heap_start, _heap_end });
-    printf("stack: {*} ~ {*} at {*}\n", .{ _stack_start, _stack_end, _stack_top });
+    println("------memory test-----", .{});
+
+    println("text+rodata: {*} ~ {*}", .{ _ro_start, _ro_end });
+    println("data: {*} ~ {*} loadaddr: {*}", .{ _data_start, _data_end, _data_loadaddr });
+    println("bss: {*} ~ {*}", .{ _bss_start, _bss_end });
+    println("heap: {*} ~ {*}", .{ _heap_start, _heap_end });
+    println("stack: {*} ~ {*} at {*}", .{ _stack_start, _stack_end, _stack_top });
 
     var local_var: u8 = 1;
     bss_var = local_var;
 
-    printf("variables in sdata: {*} bss: {*} stack local: {*}\n", .{ &sdata_var, &bss_var, &local_var });
+    println("variables in sdata: {*} bss: {*} stack local: {*}", .{ &sdata_var, &bss_var, &local_var });
+
+    println("------memory test-----", .{});
 }
 
 export const stack0 align(16) = [_]u8{0} ** (4096 * 4);

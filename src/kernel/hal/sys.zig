@@ -7,5 +7,5 @@ pub fn init() void {
         .unmached => @import("./fu740/sys.zig").init(),
     }
 
-    console.printf("{s} initialised\n", .{@tagName(board)});
+    console.println("{s} initialised", .{@tagName(board)});
 }

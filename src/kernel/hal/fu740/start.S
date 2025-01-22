@@ -10,7 +10,7 @@ _start:
     sw	a4,0(a5)
     # only run on hart1
     csrr  t0, mhartid
-    li    t1, 1
+    li    t1, 2
     bne   t0, t1, _halt
 
 _main:

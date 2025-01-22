@@ -3,7 +3,7 @@ const riscv = @import("./riscv.zig");
 
 const csr = riscv.CSR(u64);
 
-pub const mstatus = regs.Register(packed struct(u64) {
+pub const mstatus = &regs.Register(packed struct(u64) {
     /// [0:0]
     uie: u1,
     /// [1:1]
@@ -54,7 +54,7 @@ pub const mstatus = regs.Register(packed struct(u64) {
     sd: u1,
 }, csr.r_mstatus, csr.w_mstatus){};
 
-pub const satp = regs.Register(packed struct(u64) {
+pub const satp = &regs.Register(packed struct(u64) {
     /// [0:43]
     ppn: u44,
     /// [44:59]
@@ -62,3 +62,7 @@ pub const satp = regs.Register(packed struct(u64) {
     /// [60:63]
     mode: u4,
 }, csr.r_satp, csr.w_satp){};
+
+pub const mhartid = &regs.Register(packed struct(u64) {
+    hart_id: u64,
+}, csr.r_mhartid, csr.w_noop){};
