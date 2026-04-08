@@ -15,6 +15,7 @@ _start:
 
 _main:
     la    sp, _stack_top
+    mv    a0, t0
     jal   main
 
 _halt: j _halt

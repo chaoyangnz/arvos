@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-TTY="${TTY:-/dev/cu.usbserial-31201}"
+TTY="${TTY:-/dev/cu.usbserial-31401}"
 
 zig build kernel
 
