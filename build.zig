@@ -1,9 +1,6 @@
 const std = @import("std");
 const Target = std.Target;
-const Zig = std.zig;
-const FileSource = std.build.FileSource;
 const Build = std.Build;
-const FeatureSet = std.Target.Cpu.Feature.Set;
 
 const verboseCC = false;
 const verboseLink = false;
@@ -56,32 +53,35 @@ pub fn build(b: *Build) void {
 }
 
 fn build_kernel_unmached(b: *Build) *std.Build.Step.InstallArtifact {
-    const query = Zig.CrossTarget{
+    const target = b.resolveTargetQuery(.{
         .cpu_arch = .riscv64,
         .os_tag = .freestanding,
         .abi = .none,
         .cpu_model = .{
             .explicit = &Target.riscv.cpu.sifive_u74,
         },
-    };
-    const target = b.resolveTargetQuery(query);
-    const exe = b.addExecutable(.{
-        .name = "kernel.elf",
-        .root_source_file = .{ .cwd_relative = "src/kernel/main.zig" },
+    });
+    const root_module = b.createModule(.{
+        .root_source_file = b.path("src/kernel/main.zig"),
         .target = target,
         .optimize = .Debug,
         .code_model = .medium,
+        .stack_protector = false,
+        .sanitize_c = .off,
     });
-    exe.setLinkerScriptPath(.{ .cwd_relative = "src/kernel/hal/fu740/linker.lds" });
-    exe.addAssemblyFile(.{ .cwd_relative = "src/kernel/hal/fu740/start.S" });
+    const exe = b.addExecutable(.{
+        .name = "kernel.elf",
+        .root_module = root_module,
+    });
+    exe.setLinkerScript(b.path("src/kernel/hal/fu740/linker.lds"));
+    exe.root_module.addAssemblyFile(b.path("src/kernel/hal/fu740/start.S"));
     exe.root_module.omit_frame_pointer = false;
-    exe.root_module.stack_protector = false;
     exe.pie = false;
     exe.setVerboseCC(verboseCC);
     exe.setVerboseLink(verboseLink);
     var options = b.addOptions();
     options.addOption(Board, "board", Board.unmached);
-    exe.root_module.addOptions("build_options", options);
+    root_module.addOptions("build_options", options);
 
     return b.addInstallArtifact(exe, .{});
 }
