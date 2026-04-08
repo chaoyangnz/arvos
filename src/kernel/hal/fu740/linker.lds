@@ -6,7 +6,7 @@ ENTRY( _start )
 MEMORY
 {
 	/* DDR */
-	dram (rw!x) : ORIGIN = 0x80000000, LENGTH = 1M
+	dram (rw!x) : ORIGIN = 0x80200000, LENGTH = 1M
 }
 
 SECTIONS

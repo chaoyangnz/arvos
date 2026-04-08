@@ -43,7 +43,7 @@ pub fn Mmio(comptime PackedT: type) type {
         /// modify/patch only the specific fileds based on the existing value
         pub inline fn modify(self: *volatile Self, fields: anytype) void {
             var val = self.read();
-            inline for (@typeInfo(@TypeOf(fields)).Struct.fields) |field| {
+            inline for (@typeInfo(@TypeOf(fields)).@"struct".fields) |field| {
                 @field(val, field.name) = @field(fields, field.name);
             }
             self.write(val);
@@ -52,7 +52,7 @@ pub fn Mmio(comptime PackedT: type) type {
         /// toggle the specific fields only
         pub inline fn toggle(self: *volatile Self, fields: anytype) void {
             var val = self.read();
-            inline for (@typeInfo(@TypeOf(fields)).Struct.fields) |field| {
+            inline for (@typeInfo(@TypeOf(fields)).@"struct".fields) |field| {
                 @field(val, @tagName(field.default_value.?)) = !@field(val, @tagName(field.default_value.?));
             }
             self.write(val);
@@ -62,7 +62,7 @@ pub fn Mmio(comptime PackedT: type) type {
         /// set only the specific fields, others are defaults typically zeros
         pub inline fn assign(self: *volatile Self, fields: anytype, default_value: IntT) void {
             var val: PackedT = @bitCast(default_value);
-            inline for (@typeInfo(@TypeOf(fields)).Struct.fields) |field| {
+            inline for (@typeInfo(@TypeOf(fields)).@"struct".fields) |field| {
                 @field(val, field.name) = @field(fields, field.name);
             }
             self.write(val);

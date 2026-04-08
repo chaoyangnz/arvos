@@ -32,7 +32,7 @@ make sifive_unmatched_defconfig
 PATH=$PATH:/opt/riscv/bin CROSS_COMPILE=riscv64-linux- OPENSBI=../opensbi/build/platform/generic/firmware/fw_dynamic.bin make
 ```
 
-`cp tools/u-boot/spl/u-boot-spl.bin tools/sfflash/u-boot-spl-uart-ymodem.bin`
+`cp tools/u-boot/spl/u-boot-spl.bin tools/uload/u-boot-spl-uart-ymodem.bin`
 
 ## flash u-boot spl to sd card
 
@@ -44,5 +44,5 @@ sudo dd if=spl/u-boot-spl.bin of=/dev/sdX seek=34
 ## load kernel
 
 ```
-sfload -d /dev/ttyUSB1 -f zig-out/bin/kernel.bin
+tools/uload/uload -d /dev/cu.usbserial-31201 -f zig-out/bin/kernel.bin
 ```

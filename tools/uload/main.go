@@ -1,4 +1,4 @@
-// Utility for automatically flashing firmware onto the VisionFive 2
+// Utility for automatically loading firmware over the Unmatched SPL UART path.
 
 package main
 
