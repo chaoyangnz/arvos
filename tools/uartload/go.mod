@@ -1,4 +1,4 @@
-module sfload
+module uartload
 
 go 1.19
 

@@ -32,7 +32,7 @@ make sifive_unmatched_defconfig
 PATH=$PATH:/opt/riscv/bin CROSS_COMPILE=riscv64-linux- OPENSBI=../opensbi/build/platform/generic/firmware/fw_dynamic.bin make
 ```
 
-`cp tools/u-boot/spl/u-boot-spl.bin tools/uload/u-boot-spl-uart-ymodem.bin`
+`cp tools/u-boot/spl/u-boot-spl.bin tools/uartload/u-boot-spl-uart-ymodem.bin`
 
 ## flash u-boot spl to sd card
 
@@ -44,5 +44,36 @@ sudo dd if=spl/u-boot-spl.bin of=/dev/sdX seek=34
 ## load kernel
 
 ```
-tools/uload/uload -d /dev/cu.usbserial-31201 -f zig-out/bin/kernel.bin
+tools/uartload/uartload -d /dev/cu.usbserial-31401 -f zig-out/bin/kernel.bin
 ```
+
+## openocd
+
+`arvos` already includes xPack OpenOCD in `package.json`, so there is no need
+for a global install.
+
+The current onboard debug bridge enumerates as FTDI `Dual RS232-HS`
+(`0403:6010`). A repo-local launcher is available:
+
+```
+bash ./tools/openocd.sh probe
+bash ./tools/openocd.sh serve
+```
+
+Useful overrides while we are still validating the onboard channel wiring:
+
+```
+FTDI_CHANNEL=1 bash ./tools/openocd.sh probe
+ADAPTER_KHZ=500 bash ./tools/openocd.sh serve
+```
+
+Defaults:
+- GDB server: `localhost:3333`
+- Telnet: `localhost:4444`
+- TCL: `localhost:6666`
+
+Current macOS note:
+- if you see `libusb_detach_kernel_driver() failed with LIBUSB_ERROR_ACCESS`,
+  macOS still has the FTDI USB-serial driver attached to the onboard bridge
+  and OpenOCD will not get a clean JTAG attach until that device access issue
+  is resolved

@@ -119,13 +119,13 @@ func ModemSend(c io.ReadWriter, data []byte) error {
 	packetSize := LONG_PACKET_PAYLOAD_LEN
 
 	if oBuffer[0] == POLL {
-		var blocks = uint8(len(data) / packetSize)
-		if len(data) > int(blocks)*packetSize {
+		blocks := len(data) / packetSize
+		if len(data) > blocks*packetSize {
 			blocks++
 		}
 
 		failed := 0
-		var currentBlock uint8 = 0
+		currentBlock := 0
 		fmt.Println()
 		for currentBlock < blocks && failed < 10 {
 			term.MoveCursorUp(1)
@@ -133,11 +133,11 @@ func ModemSend(c io.ReadWriter, data []byte) error {
 			term.Flush()
 
 			var err error
-			if int(currentBlock+1)*packetSize > len(data) {
+			if (currentBlock+1)*packetSize > len(data) {
 				// last block
-				err = sendBlock(c, currentBlock+1, data[int(currentBlock)*packetSize:])
+				err = sendBlock(c, uint8(currentBlock+1), data[currentBlock*packetSize:])
 			} else {
-				err = sendBlock(c, currentBlock+1, data[int(currentBlock)*packetSize:(int(currentBlock)+1)*packetSize])
+				err = sendBlock(c, uint8(currentBlock+1), data[currentBlock*packetSize:(currentBlock+1)*packetSize])
 			}
 
 			if err != nil {
